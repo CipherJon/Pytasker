@@ -9,7 +9,9 @@
     "@testing-library/jest-dom": "^5.11.10",
     "jest": "^28.0.0",
     "babel-jest": "^28.0.0",
-    "jest-environment-jsdom": "^28.0.0"
+    "jest-environment-jsdom": "^28.0.0",
+    "@babel/preset-env": "^7.14.9",
+    "@babel/preset-react": "^7.14.5"
   },
   "jest": {
     "testEnvironment": "jest-environment-jsdom",
