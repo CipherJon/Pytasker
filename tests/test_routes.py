@@ -3,17 +3,22 @@ from app import app, db
 from app.models import Task
 
 class RoutesTestCase(unittest.TestCase):
+
     def setUp(self):
         self.app = app.test_client()
         self.app.testing = True
-        db.create_all()
+        with app.app_context():
+            db.create_all()
+
+        # Create a test task
         self.test_task = Task(title='Test Task', description='This is a test task')
         db.session.add(self.test_task)
         db.session.commit()
 
     def tearDown(self):
-        db.session.remove()
-        db.drop_all()
+        with app.app_context():
+            db.session.remove()
+            db.drop_all()
 
     def test_add_task_route(self):
         response = self.app.post('/add', data=dict(

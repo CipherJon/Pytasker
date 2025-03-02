@@ -1,23 +1,16 @@
-import unittest
 from app import app, db
-from app.models import Task
+import pytest
 
-class AppTestCase(unittest.TestCase):
-    def setUp(self):
-        self.app = app.test_client()
-        self.app.testing = True
-        db.create_all()
+@pytest.fixture(scope='module')
+def test_client():
+    app.config['TESTING'] = True
+    with app.test_client() as testing_client:
+        with app.app_context():
+            db.create_all()
+            yield testing_client
+            db.drop_all()
 
-    def tearDown(self):
-        db.session.remove()
-        db.drop_all()
-
-    def test_add_task(self):
-        response = self.app.post('/add', data=dict(
-            title='Test Task',
-            description='This is a test task'
-        ), follow_redirects=True)
-        self.assertEqual(response.status_code, 200)
-
-if __name__ == '__main__':
-    unittest.main()
+def test_home_page(test_client):
+    response = test_client.get('/')
+    assert response.status_code == 200
+    assert b"Task List" in response.data
